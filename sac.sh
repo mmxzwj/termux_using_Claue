@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="Ver2.9.1"
+version="Ver2.9.2"
 clewd_version="$(grep '"version"' "clewd/package.json" | awk -F '"' '{print $4}')($(grep "Main = 'clewd修改版 v'" "clewd/lib/clewd-utils.js" | awk -F'[()]' '{print $3}'))"
 st_version=$(grep '"version"' "SillyTavern/package.json" | awk -F '"' '{print $4}')
 echo "hoping：卡在这里了？...说明有小猫没开魔法喵~"
@@ -481,6 +481,7 @@ function sillyTavernSettings {
 \033[0;37m选项4 导入最新整合预设\033[0m
 \033[0;33m选项5 自定义模型名称\033[0m
 \033[0;37m选项6 自定义unlock上下文长度\033[0m
+\033[0;33m选项7 删除旧版本酒馆\033[0m
 \033[0;33m--------------------------------------\033[0m
 \033[0;31m选项0 更新酒馆\033[0m
 \033[0;33m--------------------------------------\033[0m
@@ -503,7 +504,17 @@ function sillyTavernSettings {
 						NEW_FOLDER_NAME="SillyTavern_$(date +%Y%m%d)"
 						mv SillyTavern_old $NEW_FOLDER_NAME
 					fi                                                                
-					git clone https://github.com/SillyTavern/SillyTavern.git SillyTavern_new
+					echo -e "
+hoping：选择更新正式版或者测试版喵？
+\033[0;33m选项1 正式版\033[0m
+\033[0;37m选项2 测试版\033[0m"
+					while :
+					do
+					    read -n 1 stupdate
+					    [ "$stupdate" = 1 ] && { git clone https://github.com/SillyTavern/SillyTavern.git SillyTavern_new; break; }
+					    [ "$stupdate" = 2 ] && { git clone -b staging https://github.com/SillyTavern/SillyTavern.git SillyTavern_new; break; }
+					    echo -e "\n\033[5;33m选择错误，快快重新选择喵~\033[0m"
+					done
 
 					if [ ! -d "SillyTavern_new" ]; then
 						echo -e "(*꒦ິ⌓꒦ີ)\n\033[0;33m hoping：因为网络波动下载失败了，更换网络再试喵~\n\033[0m"
@@ -622,6 +633,11 @@ function sillyTavernSettings {
             else
                 echo "并未修改喵~"
             fi
+            ;;
+        7)
+            echo -e "是否删除所有旧版本酒馆喵？"
+            read delSTChoice
+            [[ "$delSTChoice" == [yY] ]] && { echo -e "开始删除喵~"; rm -rf SillyTavern_*; echo -e "旧版本酒馆删除完成了喵~"; } || echo "什么都没有执行喵~" >&2
             ;;
         *)
             echo "什么都没有执行喵~"
