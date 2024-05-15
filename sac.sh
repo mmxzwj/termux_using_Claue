@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="Ver2.9.2"
+version="Ver2.9.3"
 clewd_version="$(grep '"version"' "clewd/package.json" | awk -F '"' '{print $4}')($(grep "Main = 'clewd修改版 v'" "clewd/lib/clewd-utils.js" | awk -F'[()]' '{print $3}'))"
 st_version=$(grep '"version"' "SillyTavern/package.json" | awk -F '"' '{print $4}')
 echo "hoping：卡在这里了？...说明有小猫没开魔法喵~"
@@ -475,13 +475,15 @@ function sillyTavernSettings {
 	echo -e "\033[0;36mhoping：选一个执行喵~\033[0m
 \033[0;33m当前版本:\033[0m$st_version \033[0;33m最新版本:\033[0m\033[5;36m$st_latest\033[0m
 \033[0;33m--------------------------------------\033[0m
-\033[0;33m选项1 安装TavernAI-extras（酒馆拓展）\033[0m
-\033[0;37m选项2 启动TavernAI-extras（酒馆拓展）\033[0m
-\033[0;33m选项3 修改酒馆端口\033[0m
-\033[0;37m选项4 导入最新整合预设\033[0m
-\033[0;33m选项5 自定义模型名称\033[0m
-\033[0;37m选项6 自定义unlock上下文长度\033[0m
-\033[0;33m选项7 删除旧版本酒馆\033[0m
+\033[0;33m选项1 安装 TavernAI-extras（酒馆拓展）\033[0m
+\033[0;37m选项2 启动 TavernAI-extras（酒馆拓展）\033[0m
+\033[0;33m选项3 修改 酒馆端口\033[0m
+\033[0;37m选项4 导入 最新整合预设\033[0m
+\033[0;33m选项5 自定义 模型名称\033[0m
+\033[0;37m选项6 自定义 unlock上下文长度\033[0m
+\033[0;33m选项7 删除 旧版本酒馆(不包括上一版本)\033[0m
+\033[0;37m选项8 回退 上一版本酒馆\033[0m
+\033[0;33m选项9 导出 当前版本酒馆\033[0m
 \033[0;33m--------------------------------------\033[0m
 \033[0;31m选项0 更新酒馆\033[0m
 \033[0;33m--------------------------------------\033[0m
@@ -530,33 +532,9 @@ hoping：选择更新正式版或者测试版喵？
 					cp -r SillyTavern/public/User\ Avatars/. SillyTavern_new/public/User\ Avatars/
 					cp -r SillyTavern/public/backgrounds/. SillyTavern_new/public/backgrounds/
 					cp -r SillyTavern/public/settings.json SillyTavern_new/public/settings.json
-					mv SillyTavern SillyTavern_old                                    
+					mv SillyTavern SillyTavern_old                                  
 					mv SillyTavern_new SillyTavern
-
-					read -p "是否删除旧版本,请输入Y/N:" para
-					case $para in
-						[yY])
-							read -p "若要删除请再次确认" queren
-							case $queren in
-								[yY])
-									rm -rf SillyTavern_old
-									echo "hoping:酒馆更新成功了喵~"
-									;;
-								[nN])
-									echo "保留旧版本"
-									echo "hoping:酒馆更新结束了喵~"
-									;;
-								*)
-									echo "错误的输入"
-									read -p "已经默认保留旧版本"
-									echo "hoping:酒馆更新结束了喵~"
-									;;
-							esac
-							;;
-						*)
-							echo "保留旧版本"
-							;;
-					esac
+					echo -e "\033[0;33mhoping：酒馆已更新完毕，启动后若丢失聊天请回退上一版本喵~\033[0m"
 					;;
 			esac
 			st_version=$(grep '"version"' "SillyTavern/package.json" | awk -F '"' '{print $4}')
@@ -635,9 +613,37 @@ hoping：选择更新正式版或者测试版喵？
             fi
             ;;
         7)
+            echo -e "当前存在"
+            ls | grep "^SillyTavern_\([^o].*\|..+\.?.*\)$"
             echo -e "是否删除所有旧版本酒馆喵？"
             read delSTChoice
-            [[ "$delSTChoice" == [yY] ]] && { echo -e "开始删除喵~"; rm -rf SillyTavern_*; echo -e "旧版本酒馆删除完成了喵~"; } || echo "什么都没有执行喵~" >&2
+            [[ "$delSTChoice" == [yY] ]] && { echo -e "开始删除喵~"; ls | grep "^SillyTavern_\([^o].*\|..+\.?.*\)$" | xargs -d"\n" rm -r; echo -e "旧版本酒馆删除完成了喵~"; } || echo "什么都没有执行喵~" >&2
+            ;;
+        8)
+            while :
+            do
+                [ ! -d SillyTavern_old ] && { echo -e "hoping：当前未检查到上一版本喵~"; break; }
+                echo -e "版本正在回退中，请稍等喵~"
+                mv SillyTavern SillyTavern_temp
+                mv SillyTavern_old SillyTavern
+                mv SillyTavern_temp SillyTavern_old
+                echo -e "hoping：版本回退成功了喵~"
+                st_version=$(grep '"version"' "SillyTavern/package.json" | awk -F '"' '{print $4}')
+                break   
+            done
+            ;;
+        9)
+            [ ! command -v zip &> /dev/null ] && { DEBIAN_FRONTEND=noninteractive apt install zip -y; }
+            echo -e "\033[0;33m压缩文件中，请稍等喵~\033[0m"
+            rm -rf SillyTavern.zip
+            zip -rq SillyTavern.zip SillyTavern/
+            echo -e "文件压缩完成"
+            python -m http.server 8976 &
+            echo -e "hoping：\033[0;33m十秒后将关闭网页并回到主页面喵~\033[0m"
+            termux-open-url http://127.0.0.1:8976/SillyTavern.zip
+            sleep 10
+            rm -rf SillyTavern.zip
+            pkill -f 'python -m http.server'
             ;;
         *)
             echo "什么都没有执行喵~"
