@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="Ver2.9.3"
+version="Ver2.9.4"
 clewd_version="$(grep '"version"' "clewd/package.json" | awk -F '"' '{print $4}')($(grep "Main = 'clewd修改版 v'" "clewd/lib/clewd-utils.js" | awk -F'[()]' '{print $3}'))"
 st_version=$(grep '"version"' "SillyTavern/package.json" | awk -F '"' '{print $4}')
 echo "hoping：卡在这里了？...说明有小猫没开魔法喵~"
@@ -522,16 +522,29 @@ hoping：选择更新正式版或者测试版喵？
 						echo -e "(*꒦ິ⌓꒦ີ)\n\033[0;33m hoping：因为网络波动下载失败了，更换网络再试喵~\n\033[0m"
 						exit 5
 					fi
-				
-					cp -r SillyTavern/public/characters/. SillyTavern_new/public/characters/
-					cp -r SillyTavern/public/chats/. SillyTavern_new/public/chats/       
-					cp -r SillyTavern/public/worlds/. SillyTavern_new/public/worlds/
-					cp -r SillyTavern/public/groups/. SillyTavern_new/public/groups/
-					cp -r SillyTavern/public/group\ chats/. SillyTavern_new/public/group\ chats/
-					cp -r SillyTavern/public/OpenAI\ Settings/. SillyTavern_new/public/OpenAI\ Settings/
-					cp -r SillyTavern/public/User\ Avatars/. SillyTavern_new/public/User\ Avatars/
-					cp -r SillyTavern/public/backgrounds/. SillyTavern_new/public/backgrounds/
-					cp -r SillyTavern/public/settings.json SillyTavern_new/public/settings.json
+					
+					if [ -d "SillyTavern/data/default-user" ]; then
+					    cp -r SillyTavern/data/default-user/characters/. SillyTavern_new/public/characters/
+    					cp -r SillyTavern/data/default-user/chats/. SillyTavern_new/public/chats/       
+    					cp -r SillyTavern/data/default-user/worlds/. SillyTavern_new/public/worlds/
+    					cp -r SillyTavern/data/default-user/groups/. SillyTavern_new/public/groups/
+    					cp -r SillyTavern/data/default-user/group\ chats/. SillyTavern_new/public/group\ chats/
+    					cp -r SillyTavern/data/default-user/OpenAI\ Settings/. SillyTavern_new/public/OpenAI\ Settings/
+    					cp -r SillyTavern/data/default-user/User\ Avatars/. SillyTavern_new/public/User\ Avatars/
+    					cp -r SillyTavern/data/default-user/backgrounds/. SillyTavern_new/public/backgrounds/
+    					cp -r SillyTavern/data/default-user/settings.json SillyTavern_new/public/settings.json
+					else
+    					cp -r SillyTavern/public/characters/. SillyTavern_new/public/characters/
+    					cp -r SillyTavern/public/chats/. SillyTavern_new/public/chats/       
+    					cp -r SillyTavern/public/worlds/. SillyTavern_new/public/worlds/
+    					cp -r SillyTavern/public/groups/. SillyTavern_new/public/groups/
+    					cp -r SillyTavern/public/group\ chats/. SillyTavern_new/public/group\ chats/
+    					cp -r SillyTavern/public/OpenAI\ Settings/. SillyTavern_new/public/OpenAI\ Settings/
+    					cp -r SillyTavern/public/User\ Avatars/. SillyTavern_new/public/User\ Avatars/
+    					cp -r SillyTavern/public/backgrounds/. SillyTavern_new/public/backgrounds/
+    					cp -r SillyTavern/public/settings.json SillyTavern_new/public/settings.json
+					fi
+					
 					mv SillyTavern SillyTavern_old                                  
 					mv SillyTavern_new SillyTavern
 					echo -e "\033[0;33mhoping：酒馆已更新完毕，启动后若丢失聊天请回退上一版本喵~\033[0m"
