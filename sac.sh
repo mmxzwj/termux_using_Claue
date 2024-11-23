@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="Ver2.9.5"
+version="Ver2.9.6"
 clewd_version="$(grep '"version"' "clewd/package.json" | awk -F '"' '{print $4}')($(grep "Main = 'clewd修改版 v'" "clewd/lib/clewd-utils.js" | awk -F'[()]' '{print $3}'))"
 st_version=$(grep '"version"' "SillyTavern/package.json" | awk -F '"' '{print $4}')
 echo "hoping：卡在这里了？...说明有小猫没开魔法喵~"
@@ -53,10 +53,8 @@ fi
 
 echo "root软链接已添加，可直接在mt管理器打开root文件夹修改文件"
 
-if [ ! -d "SillyTavern" ] || [ ! -f "SillyTavern/start.sh" ]; then
+if [ ! -d "SillyTavern" ]; then
     echo "SillyTavern不存在，正在通过git下载..."
-	cp -r SillyTavern/public SillyTavern_public_bak
-	rm -rf SillyTavern
     git clone https://github.com/SillyTavern/SillyTavern SillyTavern
     echo -e "\033[0;33m本操作仅为破限下载提供方便，所有破限皆为收录，喵喵不具有破限所有权\033[0m"
     read -p "回车进行导入破限喵~"
@@ -82,9 +80,8 @@ elif [ ! -f "clewd/config.js" ]; then
     cd /root
 fi
 
-if [ ! -d "SillyTavern" ] || [ ! -f "SillyTavern/start.sh" ]; then
+if [ ! -d "SillyTavern" ]; then
 	echo -e "(*꒦ິ⌓꒦ີ)\n\033[0;33m hoping：因网络波动文件下载失败了，更换网络后再试喵~\n\033[0m"
- 	rm -rf SillyTavern
 	exit 2
 fi
 
@@ -826,10 +823,10 @@ echo -e "
 作者：hoping喵(懒喵~)，水秋喵(苦等hoping喵起床)
 版本：酒馆:$st_version clewd:$clewd_version 脚本:$version
 最新：\033[5;36m酒馆:$st_latest\033[0m \033[5;32mclewd:$clewd_latest\033[0m \033[0;33m脚本:$latest_version\033[0m
-来自：Claude2.1先行破限组
+来自：Claude先行破限组
 群号：704819371，910524479，304690608
 类脑Discord(角色卡发布等): https://discord.gg/HWNkueX34q
-此程序完全免费，不允许如浅睡纪元等人对脚本/教程进行盗用/商用。运行时需要稳定的魔法网络环境。"
+此程序完全免费，不允许对脚本/教程进行盗用/商用。运行时需要稳定的魔法网络环境。"
 while :
 do 
     echo -e "\033[0;36mhoping喵~让你选一个执行（输入数字即可），懂了吗？\033[0;38m(｡ì _ í｡)\033[0m\033[0m
