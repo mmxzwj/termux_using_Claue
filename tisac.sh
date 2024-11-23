@@ -34,7 +34,7 @@ DEBIAN_FRONTEND=noninteractive proot-distro install ubuntu
 
 echo "正在安装相应软件喵~"
 
-DEBIAN_FRONTEND=noninteractive pkg install git vim curl xz-utils -y
+DEBIAN_FRONTEND=noninteractive pkg install git vim curl tar xz-utils python3 zip -y
 
 if [ -d "SillyTavern" ]; then
   cp -r SillyTavern $current/root/
@@ -73,8 +73,6 @@ if [ ! -f "$current/root/sac.sh" ]; then
    echo "启动文件下载失败了，换个魔法或者手动下载试试吧"
    exit
 fi
-
-ln -s /data/data/com.termux/files/usr/var/lib/proot-distro/installed-rootfs/ubuntu/root
 
 echo "bash /root/sac.sh" >>$current/root/.bashrc
 
