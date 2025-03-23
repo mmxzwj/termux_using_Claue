@@ -32,9 +32,9 @@ if command -v node &> /dev/null; then
     node --version
 else
     echo "node指令不存在，正在尝试重新下载喵~"
-    curl -O https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-arm64.tar.xz
-    tar xf node-v20.10.0-linux-arm64.tar.xz
-    echo "export PATH=\$PATH:/root/node-v20.10.0-linux-arm64/bin" >>/etc/profile
+    curl -O https://nodejs.org/dist/v20.10.0/node-v22.14.0-linux-arm64.tar.xz
+    tar xf node-v22.14.0-linux-arm64.tar.xz
+    echo "export PATH=\$PATH:/root/node-v22.14.0-linux-arm64/bin" >>/etc/profile
     source /etc/profile
     if command -v node &> /dev/null; then
         echo "node成功下载"
@@ -861,7 +861,7 @@ do
             #启动SillyTavern
 			ps -ef | grep server.js | awk '{print$2}' | xargs kill -9
             cd SillyTavern
-	        bash start.sh
+	        npm  start
             echo "酒馆已关闭, 即将返回主菜单"
             cd ../
             ;; 
