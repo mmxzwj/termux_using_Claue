@@ -90,8 +90,8 @@ function clewdSettings {
         sactag_value="默认"
     fi
     clewd_dir=clewd
-    echo -e "\033[0;36mhoping：选一个执行喵~\033[0m
-\033[0;33m当前:\033[0m$clewd_version \033[0;33m最新:\033[0m\033[5;36m$clewd_latest\033[0m
+    echo -e "\033[0;36m请选择要执行的操作：\033[0m
+\033[0;33m当前版本:\033[0m$clewd_version \033[0;33m最新版本:\033[0m\033[5;36m$clewd_latest\033[0m
 \033[0;33m--------------------------------------\033[0m
 \033[0;33m选项1 查看 config.js 配置文件\033[0m
 \033[0;33m选项3 添加 Cookies\033[0m
@@ -106,9 +106,9 @@ function clewdSettings {
     case $option in 
         0)
             cd /root/clewd
-            echo -e "\033[0;33m正在更新clewd，请稍等...\033[0m"
+            echo -e "\033[0;33m正在更新 clewd，请稍候...\033[0m"
             git pull
-            echo -e "\033[0;32mclewd更新完成喵~\033[0m"
+            echo -e "\033[0;32m更新完成\033[0m"
             cd /root
             clewd_version="$(grep '"version"' "clewd/package.json" | awk -F '"' '{print $4}')($(grep "Main = 'clewd修改版 v'" "clewd/lib/clewd-utils.js" | awk -F'[()]' '{print $3}'))"
             ;;
@@ -118,12 +118,12 @@ function clewdSettings {
             ;;
         3) 
             # 添加 Cookies
-            echo "hoping：请输入你的cookie文本喵~(回车进行保存，如果全部输入完后按一次ctrl+D即可退出输入):"
+            echo "请输入 cookie 文本（输入完成后按 Ctrl+D 结束输入）:"
             while IFS= read -r line; do
                 cookies=$(echo "$line" | grep -E -o '"?sessionKey=[^"]{100,120}AA"?' | tr -d "\"'")
                 echo "$cookies"
                 if [ -n "$cookies" ]; then
-                    echo -e "喵喵猜你的cookies是:\n"
+                    echo -e "检测到的 cookies:\n"
                     echo "$cookies"
                     # Format cookies, one per line with quotes
                     cookies=$(echo "$cookies" | tr ' ' '\n' | sed -e 's/^/"/; s/$/"/g')
@@ -131,52 +131,52 @@ function clewdSettings {
                     cookie_array=$(echo "$cookies" | tr '\n' ',' | sed 's/,$//')
                     # Update config.js
                     sed -i "/\"CookieArray\"/s/\[/\[$cookie_array\,/" ./$clewd_dir/config.js
-                    echo "Cookies成功被添加到config.js文件了喵~"
+                    echo "Cookies 已成功添加到 config.js 文件"
                 else
-                    echo "没有找到cookie喵~o(╥﹏╥)o，要不检查一下cookie是不是输错了吧？(如果要退出输入请按Ctrl+D)"
+                    echo "未找到有效的 cookie，请检查输入格式是否正确（如需退出请按 Ctrl+D）"
                 fi
             done
-            echo "cookies成功输入了(*^▽^*)"
+            echo "Cookies 添加完成"
             ;;
         6)  
             # 修改 Cookiecounter
-            echo "切换Cookie的频率, 默认为3(每3次切换), 改为-1进入测试Cookie模式"
-            read -p "是否要修改Cookiecounter?(y/n)" choice
+            echo "设置 Cookie 切换频率（默认为3次切换一次，设为-1进入测试模式）"
+            read -p "是否修改 Cookiecounter？(y/n)" choice
             if [ "$choice" == "y" ] || [ "$choice" == "Y" ]; then
                 # 读取用户输入Cookiecounter
-                read -p "请输入需要设置的数值:" cookiecounter
+                read -p "请输入新的数值:" cookiecounter
 
                 # 更新配置文件的Cookiecounter
                 sed -i 's/"Cookiecounter": .*,/"Cookiecounter": '$cookiecounter',/g' $clewd_dir/config.js
-                echo "Cookiecounter已修改为$cookiecounter"
+                echo "Cookiecounter 已修改为 $cookiecounter"
             else
-                echo "未修改Cookiecounter"
+                echo "保持原有设置"
             fi
             ;;
         9)
             PassParams_value=$(grep -oP '"PassParams": \K[^,]*' clewd/config.js)
-            echo -e "当前PassParams值为\033[0;33m $PassParams_value \033[0m喵~"
-            read -p "是否进行更改[y/n]" PassParams_choice
+            echo -e "当前 PassParams 值为：\033[0;33m $PassParams_value \033[0m"
+            read -p "是否修改？[y/n]" PassParams_choice
             if [ $PassParams_choice == "Y" ] || [ $PassParams_choice == "y" ]; then
                 if [ $PassParams_value == 'false' ];
     then
                     #将false替换为true
                     sed -i 's/"PassParams": false,/"PassParams": true,/g' $clewd_dir/config.js
-                    echo -e "hoping：'PassParams'已经被修改成\033[0;33m true \033[0m喵~."
+                    echo -e "PassParams 已修改为 \033[0;33m true \033[0m"
                 elif [ $PassParams_value == 'true' ];
     then
                     #将true替换为false
                     sed -i 's/"PassParams": true,/"PassParams": false,/g' $clewd_dir/config.js
-                    echo -e "hoping：'PassParams'值已经被修改成\033[0;33m false \033[0m喵~."
+                    echo -e "PassParams 已修改为 \033[0;33m false \033[0m"
                 else
-                    echo -e "呜呜X﹏X\nhoping喵未能找到'PassParams'."
+                    echo -e "未找到 PassParams 配置项"
                 fi
             else
-                echo "未进行修改喵~"
+                echo "保持原有设置"
             fi
             ;;
         *)
-            echo "什么都没有执行喵~"
+            echo "未选择任何操作"
             ;;
     esac
 }
@@ -228,27 +228,22 @@ function sillyTavernSettings {
 # 主菜单
 echo -e "                                              
 喵喵一键脚本-江南精简版
-作者：hoping喵(懒喵~)，水秋喵(苦等hoping喵起床)
+原作者：hoping喵(懒喵~)，水秋喵(苦等hoping喵起床)
 版本：酒馆:$st_version clewd:$clewd_version 脚本:$version
 最新：\033[5;36m酒馆:$st_latest\033[0m \033[5;32mclewd:$clewd_latest\033[0m \033[0;33m脚本:$latest_version\033[0m
-来自：Claude先行破限组
-群号：704819371，910524479，304690608
-类脑Discord(角色卡发布等): https://discord.gg/HWNkueX34q
-此程序完全免费，不允许对脚本/教程进行盗用/商用。运行时需要稳定的魔法网络环境。"
+"
 while :
 do 
-    echo -e "\033[0;36mhoping喵~让你选一个执行（输入数字即可），懂了吗？\033[0;38m(｡ì _ í｡)\033[0m\033[0m
+    echo -e "\033[0;36m请选择要执行的操作：\033[0m
 \033[0;33m--------------------------------------\033[0m
 \033[0;31m选项0 退出脚本\033[0m
-\033[0;33m选项1 启动Clewd\033[0m
+\033[0;33m选项1 启动 Clewd\033[0m
 \033[0;37m选项2 启动酒馆\033[0m
-\033[0;33m选项3 Clewd设置\033[0m
+\033[0;33m选项3 Clewd 设置\033[0m
 \033[0;37m选项4 酒馆设置\033[0m
 \033[0;33m--------------------------------------\033[0m
 \033[0;31m选项6 更新脚本\033[0m
-\033[0;33m--------------------------------------\033[0m
-\033[0;35m不准选其他选项，听到了吗？
-\033[0m\n(⇀‸↼‶)"
+\033[0;33m--------------------------------------\033[0m"
     read -n 1 option
     echo 
     case $option in 
@@ -257,22 +252,22 @@ do
         1) 
             #启动Clewd
             port=$(grep -oP '"Port":\s*\K\d+' clewd/config.js)
-            echo "端口为$port, 出现 (x)Login in {邮箱} 代表启动成功, 后续出现AI无法应答等报错请检查本窗口喵。"
-			ps -ef | grep clewd.js | awk '{print$2}' | xargs kill -9
+            echo "端口为 $port，出现 (x)Login in {邮箱} 表示启动成功。如遇到 AI 无响应等错误，请查看本窗口信息。"
+            ps -ef | grep clewd.js | awk '{print$2}' | xargs kill -9
             cd clewd
             bash start.sh
-            echo "Clewd已关闭, 即将返回主菜单"
+            echo "Clewd 已关闭，返回主菜单"
             cd ../
             ;; 
         2) 
             #启动SillyTavern
-			ps -ef | grep server.js | awk '{print$2}' | xargs kill -9
+            ps -ef | grep server.js | awk '{print$2}' | xargs kill -9
             cd SillyTavern
-            echo -e "\033[0;33m正在安装依赖，请稍等...\033[0m"
-	        npm install
-            echo -e "\033[0;32m依赖安装完成，正在启动酒馆...\033[0m"
-	        npm start
-            echo "酒馆已关闭, 即将返回主菜单"
+            echo -e "\033[0;33m正在安装依赖，请稍候...\033[0m"
+            npm install
+            echo -e "\033[0;32m依赖安装完成，正在启动...\033[0m"
+            npm start
+            echo "SillyTavern 已关闭，返回主菜单"
             cd ../
             ;; 
         3) 
@@ -286,12 +281,12 @@ do
         6)
             # 更新脚本
             curl -O https://raw.githubusercontent.com/mmxzwj/termux_using_Claue/refs/heads/main/sac.sh
-	    echo -e "重启终端或者输入bash sac.sh重新进入脚本喵~"
+            echo -e "请重启终端或执行 bash sac.sh 重新启动脚本"
             break ;;
         *) 
-            echo -e "m9( ｀д´ )!!!! \n\033[0;36m坏猫猫居然不听话，存心和我hoping喵~过不去是吧？\033[0m\n"
+            echo -e "无效的选项\n"
             ;;
     esac
 done 
-echo "已退出喵喵一键脚本，输入 bash sac.sh 可重新进入脚本喵~"
+echo "脚本已退出，执行 bash sac.sh 可重新启动脚本"
 exit
