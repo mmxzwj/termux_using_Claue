@@ -91,35 +91,30 @@ function clewdSettings {
     fi
     clewd_dir=clewd
     echo -e "\033[0;36mhoping：选一个执行喵~\033[0m
-\033[0;33m当前:\033[0m$clewd_version \033[0;33m最新:\033[0m\033[5;36m$clewd_latest\033[0m \033[0;33mconfig.js:\033[5;37m$sactag_value
+\033[0;33m当前:\033[0m$clewd_version \033[0;33m最新:\033[0m\033[5;36m$clewd_latest\033[0m
 \033[0;33m--------------------------------------\033[0m
 \033[0;33m选项1 查看 config.js 配置文件\033[0m
-\033[0;37m选项2 使用 Vim 编辑 config.js\033[0m
 \033[0;33m选项3 添加 Cookies\033[0m
-\033[0;37m选项4 修改 Clewd 密码\033[0m
-\033[0;33m选项5 修改 Clewd 端口\033[0m
 \033[0;37m选项6 修改 Cookiecounter\033[0m
-\033[0;33m选项7 修改 rProxy\033[0m
-\033[0;37m选项8 修改 PreventImperson状态\033[0m
 \033[0;33m选项9 修改 PassParams状态\033[0m
-\033[0;37m选项a 修改 padtxt\033[0m
-\033[0;33m选项b 切换 config.js配置\033[0m
-\033[0;37m选项c 定义 clewd接入模型\033[0m
-\033[0;33m选项d 修改 api_rProxy(第三方接口)\033[0m
 \033[0;33m--------------------------------------\033[0m
-\033[0;31m选项0 更新 clewd(test分支)\033[0m
+\033[0;31m选项0 更新 clewd\033[0m
 \033[0;33m--------------------------------------\033[0m
 "
     read -n 1 option
     echo
     case $option in 
+        0)
+            cd /root/clewd
+            echo -e "\033[0;33m正在更新clewd，请稍等...\033[0m"
+            git pull
+            echo -e "\033[0;32mclewd更新完成喵~\033[0m"
+            cd /root
+            clewd_version="$(grep '"version"' "clewd/package.json" | awk -F '"' '{print $4}')($(grep "Main = 'clewd修改版 v'" "clewd/lib/clewd-utils.js" | awk -F'[()]' '{print $3}'))"
+            ;;
         1) 
             # 查看 config.js
             cat $clewd_dir/config.js
-            ;;
-        2)
-            # 使用 Vim 编辑 config.js
-            vim $clewd_dir/config.js
             ;;
         3) 
             # 添加 Cookies
@@ -143,35 +138,6 @@ function clewdSettings {
             done
             echo "cookies成功输入了(*^▽^*)"
             ;;
-        4) 
-            # 修改 Clewd 密码
-            read -p "是否修改密码?(y/n)" choice
-            if [ "$choice" == "y" ] || [ "$choice" == "Y" ]; then
-                # 读取用户输入的新密码
-                read -p "请输入新密码\n（不是你本地部署设密码干哈啊？）:" new_pass
-
-                # 修改密码
-                sed -i 's/"ProxyPassword": ".*",/"ProxyPassword": "'$new_pass'",/g' $clewd_dir/config.js
-
-                echo "密码已修改为$new_pass"
-            else
-                echo "未修改密码"
-            fi
-            ;; 
-        5) 
-            # 修改 Clewd 端口
-            read -p "是否要修改开放端口?(y/n)" choice
-            if [ "$choice" == "y" ] || [ "$choice" == "Y" ]; then
-                # 读取用户输入的端口号
-                read -p "请输入开放的端口号:" custom_port
-
-                # 更新配置文件的端口号
-                sed -i 's/"Port": [0-9]*/"Port": '$custom_port'/g' $clewd_dir/config.js
-                echo "端口已修改为$custom_port"
-            else
-                echo "未修改端口号"
-            fi
-            ;;
         6)  
             # 修改 Cookiecounter
             echo "切换Cookie的频率, 默认为3(每3次切换), 改为-1进入测试Cookie模式"
@@ -185,51 +151,6 @@ function clewdSettings {
                 echo "Cookiecounter已修改为$cookiecounter"
             else
                 echo "未修改Cookiecounter"
-            fi
-            ;;
-        7)  
-            # 修改 rProxy
-            echo -e "\n1. 官网地址claude.ai\n2. 国内镜像地址finechat.ai\n3. 自定义地址\n0. 不修改"
-            read -p "输入选择喵：" choice
-            case $choice in 
-                1)  
-                    sed -i 's/"rProxy": ".*",/"rProxy": "",/g' $clewd_dir/config.js
-                    ;; 
-                2) 
-                    sed -i 's#"rProxy": ".*",#"rProxy": "https://chat.finechat.ai",#g' $clewd_dir/config.js
-                    ;; 
-                3)
-                    # 读取用户输入rProxy
-                    read -p "请输入需要设置的数值:" rProxy
-                    # 更新配置文件的rProxy
-                    sed -i 's#"rProxy": ".*",#"rProxy": "'$rProxy'",#g' $clewd_dir/config.js
-                    echo "rProxy已修改为$rProxy"
-                    ;; 
-                *) 
-                    echo "不修改喵~"
-                    break ;; 
-            esac
-            ;;
-        8)
-            PreventImperson_value=$(grep -oP '"PreventImperson": \K[^,]*' clewd/config.js)
-            echo -e "当前PreventImperson值为\033[0;33m $PreventImperson_value \033[0m喵~"
-            read -p "是否进行更改[y/n]" PreventImperson_choice
-            if [ $PreventImperson_choice == "Y" ] || [ $PreventImperson_choice == "y" ]; then
-                if [ $PreventImperson_value == 'false' ];
-    then
-                    #将false替换为true
-                    sed -i 's/"PreventImperson": false,/"PreventImperson": true,/g' $clewd_dir/config.js
-                    echo -e "hoping：'PreventImperson'已经被修改成\033[0;33m true \033[0m喵~."
-                elif [ $PreventImperson_value == 'true' ];
-    then
-                    #将true替换为false
-                    sed -i 's/"PreventImperson": true,/"PreventImperson": false,/g' $clewd_dir/config.js
-                    echo -e "hoping：'PreventImperson'值已经被修改成\033[0;33m false \033[0m喵~."
-                else
-                    echo -e "呜呜X﹏X\nhoping喵未能找到'PreventImperson'."
-                fi
-            else
-                echo "未进行修改喵~"
             fi
             ;;
         9)
@@ -253,204 +174,6 @@ function clewdSettings {
             else
                 echo "未进行修改喵~"
             fi
-            ;;
-        a)
-            current_values=$(grep '"padtxt":' clewd/config.js | sed -e 's/.*"padtxt": "\(.*\)".*/\1/')
-            echo -e "当前的padtxt值为: \033[0;33m$current_values\033[0m"
-            echo -e "请输入新的padtxt值喵，格式如：1000,1000,15000"
-            read new_values
-            sed -i "s/\"padtxt\": \([\"'][^\"']*[\"']\|[0-9]\+\)/\"padtxt\": \"$new_values\"/g" clewd/config.js
-            echo -e "更新后的padtxt值: \033[0;36m$(grep '"padtxt":' clewd/config.js | sed -e 's/.*"padtxt": "\(.*\)".*/\1/')\033[0m"
-            ;;
-        b)
-            # Check if 'sactag' is already in the Settings
-            cd /root/clewd
-            if grep -q '"sactag"' "config.js"; then
-                sactag_value=$(grep '"sactag"' "config.js" | sed -E 's/.*"sactag": *"([^"]+)".*/\1/')
-            else
-                # Add 'sactag' to the Settings
-                sed -i'' -e '/"Settings": {/,/}/{ /[^,]$/!b; /}/i\        ,"sactag": "默认"' -e '}' "config.js"
-                sactag_value="默认"
-            fi
-            
-            print_selected() {
-            echo -e "\033[0;33m--------------------------------\033[0m"
-            echo -e "\033[0;33m使用上↑，下↓进行控制\n\033[0m回车选择。"
-            echo -e "喵喵当前正在使用: \033[5;36m$sactag_value\033[0m"
-            }
-            
-            configbak=() # 初始化一个空数组
-            for file in config_*.js; do
-                # 提取每个文件名中的 * 部分，需要去掉 'config_' 和 '.js'
-                config_string="${file#config_}"
-                config_string="${config_string%.js}"
-                # 将提取后的字符串添加到数组中
-                configbak+=("$config_string")
-            done
-            # 输出数组内容以验证结果
-            echo "${configbak[@]}"
-            modules=("${configbak[@]}")
-            modules+=(新建 删除 取消)
-            
-            declare -A selection_status
-            for i in "${!modules[@]}"; do
-                selection_status[$i]=0
-            done
-            
-            show_menu() {
-                print_selected
-            	echo -e "\033[0;33m--------------------------------\033[0m"
-            	for i in "${!modules[@]}"; do
-            	    if [[ "$i" -eq "$current_selection" ]]; then
-            		  # 当前选择中的选项使用绿色显示
-            		  echo -e "${GREEN}${modules[$i]}${NC}"
-            		else
-            		  # 其他选项正常显示
-            		  echo -e "${modules[$i]} (未选择)"
-            		fi
-            	done
-            	echo -e "\033[0;33m--------------------------------\033[0m"
-            }
-            
-            clear
-            current_selection=1
-            while true; do
-                show_menu
-            	# 读取用户输入
-            	IFS= read -rsn1 key
-            
-            	case "$key" in
-                    $'\x1b')
-            		# 读取转义序列
-            		read -rsn2 -t 0.1 key
-            		case "$key" in
-            	        '[A') # 上箭头
-            			  if [[ $current_selection -eq 0 ]]; then
-            				current_selection=$((${#modules[@]} - 1))
-            			  else
-            				((current_selection--))
-            			  fi
-            			  ;;
-            			'[B') # 下箭头
-            			  if [[ $current_selection -eq $((${#modules[@]} - 1)) ]]; then
-            				current_selection=0
-            			  else
-            				((current_selection++))
-            			  fi
-            			  ;;
-            		  esac
-            		  ;;
-            		"") # Enter键
-            		  if [[ $current_selection -eq $((${#modules[@]} - 3)) ]]; then
-            			#创建新配置
-                        echo "给新的config.js命名喵~"
-                        while :
-                        do
-                            read newsactag
-                            [ -n "$newsactag" ] && break
-                            echo "命名不能为空，快重新输入🐱喵~"
-                        done
-                        mv config.js "config_$sactag_value.js"
-                        ps -ef | grep clewd.js | awk '{print$2}' | xargs kill -9
-                        bash start.sh
-                        sed -i'' -e "/\"Settings\": {/,/}/{ /[^,]$/!b; /}/i\\        ,\"sactag\": \"$newsactag\"" -e '}' "config.js"
-                        cd /root
-                        clewdSettings
-                        break
-                      elif [[ $current_selection -eq $((${#modules[@]} - 2)) ]]; then
-                        #删除config.js
-                        echo "输入需要删除的配置名称喵~"
-                        echo "当前存在"
-                        echo "${configbak[@]}"
-                        while :
-                        do
-                            read delsactag
-                            configfile=$(ls config_$delsactag.js 2>/dev/null)
-                            [ -n "$configfile" ] && break
-                            echo "没找到对应配置，检查一下名称是不是输错了喵~"
-                        done
-                        rm -rf $configfile
-                        cd /root
-                        break
-            		  elif [[ $current_selection -eq $((${#modules[@]} - 1)) ]]; then
-            			# 选择 "退出" 选项
-            			echo "当前并未选择"
-            			cd /root
-            			break
-            		  else
-            			# 切换config.js
-            			mv config.js "config_$sactag_value.js"
-            			mv "config_${modules[$current_selection]}.js" config.js
-            			echo -e "config文件成功切换为：\033[5;36m$(grep '"sactag"' "config.js" | sed -E 's/.*"sactag": *"([^"]+)".*/\1/')\033[0m"
-            			sleep 2
-            			cd /root
-            			break
-            		  fi
-            		  ;;
-            		'q') # 按 'q' 退出
-            		  cd /root
-            		  break
-            		  ;;
-            	esac
-            	# 清除屏幕以准备下一轮显示
-            	clear
-            done
-            cd ~
-            ;;
-        c)
-            echo "是否添加自定义模型喵[y/n]？"
-            read cuschoice
-            if [[ "$cuschoice" == [yY] ]]; then
-                echo "输入自定义的模型名称喵~"
-                read model_name
-                sed -i "/((name => ({ id: name }))), {/a\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ id: '$model_name'},{" clewd/clewd.js
-            else
-                echo "并未添加自定义模型喵~"
-            fi
-            ;;
-        d)
-            # 修改 api_rProxy
-            echo -e "是否修改api_rProxy地址喵~?"[y/n]
-            read  choice
-            case $choice in  
-                [yY])
-                    # 读取用户输入rProxy
-                    read -p "请输入需要设置代理地址喵~:" api_rProxy
-                    # 更新配置文件的rProxy
-                    sed -i 's#"api_rProxy": ".*",#"api_rProxy": "'$api_rProxy'",#g' $clewd_dir/config.js
-                    echo "api_rProxy已修改为$api_rProxy"
-                    ;; 
-                *) 
-                    echo "不修改喵~"
-                    ;; 
-            esac
-            ;;
-        0)
-			echo -e "hoping：选择更新模式(两种模式都会保留重要数据)喵~\n\033[0;33m--------------------------------------\n\033[0m\033[0;33m选项1 使用git pull进行简单更新\n\033[0m\033[0;37m选项2 几乎重新下载进行全面更新\n\033[0m"
-            read -n 1 -p "" clewdup_choice
-			echo
-			cd /root
-			case $clewdup_choice in
-				1)
-					cd /root/clewd
-					git checkout -b test origin/test
-					git pull
-					;;
-				2)
-					git clone -b test https://github.com/teralomaniac/clewd.git /root/clewd_new
-					if [ ! -d "clewd_new" ]; then
-						echo -e "(*꒦ິ⌓꒦ີ)\n\033[0;33m hoping：因为网络波动下载失败了，更换网络再试喵~\n\033[0m"
-						exit 5
-					fi
-					cp -r clewd/config*.js clewd_new/
-					if [ -f "clewd_new/config.js" ]; then
-						echo "config.js配置文件已转移，正在删除旧版clewd"
-						rm -rf /root/clewd
-						mv clewd_new clewd
-					fi
-					;;
-			esac
-			clewd_version="$(grep '"version"' "clewd/package.json" | awk -F '"' '{print $4}')($(grep "Main = 'clewd修改版 v'" "clewd/lib/clewd-utils.js" | awk -F'[()]' '{print $3}'))"
             ;;
         *)
             echo "什么都没有执行喵~"
@@ -521,7 +244,6 @@ do
 \033[0;37m选项2 启动酒馆\033[0m
 \033[0;33m选项3 Clewd设置\033[0m
 \033[0;37m选项4 酒馆设置\033[0m
-\033[0;33m选项5 神秘小链接$saclinkemoji\033[0m
 \033[0;33m--------------------------------------\033[0m
 \033[0;31m选项6 更新脚本\033[0m
 \033[0;33m--------------------------------------\033[0m
@@ -561,13 +283,6 @@ do
             #SillyTavern设置
             sillyTavernSettings
             ;; 
-		5)
-			saclinkname=$(curl -s https://raw.githubusercontent.com/hopingmiao/termux_using_Claue/main/secret_saclink | awk -F '|' '{print $1 }')
-			echo -e "神秘小链接会不定期悄悄更新，这次的神秘小链接是..."
-			sleep 2
-			echo $saclinkname
-			termux-open-url $(curl -s https://raw.githubusercontent.com/hopingmiao/termux_using_Claue/main/secret_saclink | awk -F '|' '{print $2 }')
-			;;
         6)
             # 更新脚本
             curl -O https://raw.githubusercontent.com/mmxzwj/termux_using_Claue/refs/heads/main/sac.sh
