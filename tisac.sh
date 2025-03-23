@@ -44,11 +44,11 @@ cd $current/root
 
 echo "正在为Ubuntu安装node喵~"
 if [ ! -d node-v20.10.0-linux-arm64.tar.xz ]; then
-    curl -O https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-arm64.tar.xz
+    curl -O https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-arm64.tar.xz
 
-tar xf node-v20.10.0-linux-arm64.tar.xz
+tar xf node-v22.14.0-linux-arm64.tar.xz
 
-echo "export PATH=\$PATH:/root/node-v20.10.0-linux-arm64/bin" >>$current/etc/profile
+echo "export PATH=\$PATH:/root/node-v22.14.0-linux-arm64/bin" >>$current/etc/profile
 fi
 
 if [ ! -d "SillyTavern" ]; then
