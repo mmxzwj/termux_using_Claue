@@ -831,6 +831,7 @@ do
             #启动SillyTavern
 			ps -ef | grep server.js | awk '{print$2}' | xargs kill -9
             cd SillyTavern
+	        npm  install
 	        npm  start
             echo "酒馆已关闭, 即将返回主菜单"
             cd ../
