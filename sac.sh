@@ -831,8 +831,10 @@ do
             #启动SillyTavern
 			ps -ef | grep server.js | awk '{print$2}' | xargs kill -9
             cd SillyTavern
-	        npm  install
-	        npm  start
+            echo -e "\033[0;33m正在安装依赖，请稍等...\033[0m"
+	        npm install
+            echo -e "\033[0;32m依赖安装完成，正在启动酒馆...\033[0m"
+	        npm start
             echo "酒馆已关闭, 即将返回主菜单"
             cd ../
             ;; 
@@ -853,7 +855,7 @@ do
 			;;
         6)
             # 更新脚本
-            curl -O https://raw.githubusercontent.com/hopingmiao/termux_using_Claue/main/sac.sh
+            curl -O https://raw.githubusercontent.com/mmxzwj/termux_using_Claue/refs/heads/main/sac.sh
 	    echo -e "重启终端或者输入bash sac.sh重新进入脚本喵~"
             break ;;
         *) 
