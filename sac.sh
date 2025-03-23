@@ -463,14 +463,7 @@ function sillyTavernSettings {
 	echo -e "\033[0;36mhoping：选一个执行喵~\033[0m
 \033[0;33m当前版本:\033[0m$st_version \033[0;33m最新版本:\033[0m\033[5;36m$st_latest\033[0m
 \033[0;33m--------------------------------------\033[0m
-\033[0;33m选项1 安装 TavernAI-extras（酒馆拓展）\033[0m
-\033[0;37m选项2 启动 TavernAI-extras（酒馆拓展）\033[0m
 \033[0;33m选项3 修改 酒馆端口\033[0m
-\033[0;37m选项5 自定义 模型名称\033[0m
-\033[0;33m选项6 自定义 unlock上下文长度\033[0m
-\033[0;37m选项7 删除 旧版本酒馆(不包括上一版本)\033[0m
-\033[0;33m选项8 回退 上一版本酒馆\033[0m
-\033[0;33m选项9 导出 当前版本酒馆\033[0m
 \033[0;33m--------------------------------------\033[0m
 \033[0;31m选项0 更新酒馆\033[0m
 \033[0;33m--------------------------------------\033[0m
@@ -479,73 +472,12 @@ function sillyTavernSettings {
     echo
     case $option in 
         0)
-			echo -e "hoping：选择更新模式(重要数据会进行转移，但喵喵最好自己有备份)喵~\n\033[0;33m--------------------------------------\n\033[0m\033[0;33m选项1 使用git pull进行简单更新\n\033[0m\033[0;37m选项2 几乎重新下载进行全面更新\n\033[0m"
-            read -n 1 -p "" stup_choice
-			echo
-			cd /root
-			case $stup_choice in
-				1)
-					cd /root/SillyTavern
-					git pull
-					;;
-				2)
-					if [ -d "SillyTavern_old" ]; then                                   
-						NEW_FOLDER_NAME="SillyTavern_$(date +%Y%m%d)"
-						mv SillyTavern_old $NEW_FOLDER_NAME
-					fi                                                                
-					echo -e "
-hoping：选择更新正式版或者测试版喵？
-\033[0;33m选项1 正式版\033[0m
-\033[0;37m选项2 测试版\033[0m"
-					while :
-					do
-					    read -n 1 stupdate
-					    [ "$stupdate" = 1 ] && { git clone https://github.com/SillyTavern/SillyTavern.git SillyTavern_new; break; }
-					    [ "$stupdate" = 2 ] && { git clone -b staging https://github.com/SillyTavern/SillyTavern.git SillyTavern_new; break; }
-					    echo -e "\n\033[5;33m选择错误，快快重新选择喵~\033[0m"
-					done
-
-					if [ ! -d "SillyTavern_new" ]; then
-						echo -e "(*꒦ິ⌓꒦ີ)\n\033[0;33m hoping：因为网络波动下载失败了，更换网络再试喵~\n\033[0m"
-						exit 5
-					fi
-					
-					if [ -d "SillyTavern/data/default-user" ]; then
-					    cp -r SillyTavern/data/default-user/characters/. SillyTavern_new/public/characters/
-    					cp -r SillyTavern/data/default-user/chats/. SillyTavern_new/public/chats/       
-    					cp -r SillyTavern/data/default-user/worlds/. SillyTavern_new/public/worlds/
-    					cp -r SillyTavern/data/default-user/groups/. SillyTavern_new/public/groups/
-    					cp -r SillyTavern/data/default-user/group\ chats/. SillyTavern_new/public/group\ chats/
-    					cp -r SillyTavern/data/default-user/OpenAI\ Settings/. SillyTavern_new/public/OpenAI\ Settings/
-    					cp -r SillyTavern/data/default-user/User\ Avatars/. SillyTavern_new/public/User\ Avatars/
-    					cp -r SillyTavern/data/default-user/backgrounds/. SillyTavern_new/public/backgrounds/
-    					cp -r SillyTavern/data/default-user/settings.json SillyTavern_new/public/settings.json
-					else
-    					cp -r SillyTavern/public/characters/. SillyTavern_new/public/characters/
-    					cp -r SillyTavern/public/chats/. SillyTavern_new/public/chats/       
-    					cp -r SillyTavern/public/worlds/. SillyTavern_new/public/worlds/
-    					cp -r SillyTavern/public/groups/. SillyTavern_new/public/groups/
-    					cp -r SillyTavern/public/group\ chats/. SillyTavern_new/public/group\ chats/
-    					cp -r SillyTavern/public/OpenAI\ Settings/. SillyTavern_new/public/OpenAI\ Settings/
-    					cp -r SillyTavern/public/User\ Avatars/. SillyTavern_new/public/User\ Avatars/
-    					cp -r SillyTavern/public/backgrounds/. SillyTavern_new/public/backgrounds/
-    					cp -r SillyTavern/public/settings.json SillyTavern_new/public/settings.json
-					fi
-					
-					mv SillyTavern SillyTavern_old                                  
-					mv SillyTavern_new SillyTavern
-					echo -e "\033[0;33mhoping：酒馆已更新完毕，启动后若丢失聊天请回退上一版本喵~\033[0m"
-					;;
-			esac
-			st_version=$(grep '"version"' "SillyTavern/package.json" | awk -F '"' '{print $4}')
-            ;;
-        1)
-            #安装TavernAI-extras（酒馆拓展）及其环境
-			TavernAI-extrasinstall
-            ;;
-        2)
-            #启动TavernAI-extras（酒馆拓展）
-			TavernAI-extrasstart
+            cd /root/SillyTavern
+            echo -e "\033[0;33m正在更新酒馆，请稍等...\033[0m"
+            git pull
+            echo -e "\033[0;32m酒馆更新完成喵~\033[0m"
+            cd /root
+            st_version=$(grep '"version"' "SillyTavern/package.json" | awk -F '"' '{print $4}')
             ;;
 		3)
 			if [ ! -f "SillyTavern/config.yaml" ]; then
@@ -564,229 +496,12 @@ hoping：选择更新正式版或者测试版喵？
                 echo "未修改端口号"
             fi
             ;;
-        5)
-            echo -e "\033[5;33m当前存在自定义模型有：\033[0m"
-            echo -e "$(sed -n '/<optgroup label="自定义">/,/<optgroup label="GPT-3.5 Turbo">/{s/.*<option value="\([^"]*\)".*/\1/p}' SillyTavern/public/index.html)"
-            echo "是否添加自定义模型喵[y/n]？"
-            read cuschoice
-            if [[ "$cuschoice" == [yY] ]]; then
-                echo "输入自定义的模型名称喵~"
-                read CUSTOM_INPUT_VALUE
-                grep -q '<optgroup label="自定义">' "SillyTavern/public/index.html" && sed -i "/<optgroup label=\"自定义\">/a\ \ \ \ <option value=\"$CUSTOM_INPUT_VALUE\">$CUSTOM_INPUT_VALUE</option>" "SillyTavern/public/index.html" || { sed -i "/<optgroup label=\"GPT-3.5 Turbo\">/i\<optgroup label=\"自定义\">\n\ \ \ \ <option value=\"$CUSTOM_INPUT_VALUE\">$CUSTOM_INPUT_VALUE</option>\n</optgroup>" "SillyTavern/public/index.html"; sed -i "/<optgroup label=\"Versions\">/i\<optgroup label=\"自定义\">\n\ \ \ \ <option value=\"$CUSTOM_INPUT_VALUE\">$CUSTOM_INPUT_VALUE</option>\n</optgroup>" "SillyTavern/public/index.html"; }
-                echo -e "\033[0;33m已添加$CUSTOM_INPUT_VALUE模型喵~\033[0m"
-            else
-                echo "并未添加喵~"
-            fi
-            sleep 2
-            ;;
-        6)
-            unlocked_max=$(sed -n 's/^const unlocked_max = \(.*\);$/\1/p' SillyTavern/public/scripts/openai.js)
-            echo "当前unlocked_max(最大上下文)为$unlocked_max喵~"
-            echo "是否修改最大上下文喵？[y/n]"
-            read unlockedchoice
-            if [[ "$unlockedchoice" == [yY] ]]; then
-                echo "输入unlocked_max值，例如200000"
-                read unlocked_max
-                sed -i "s/^const unlocked_max = .*;/const unlocked_max = ${unlocked_max};/" "SillyTavern/public/scripts/openai.js"
-            else
-                echo "并未修改喵~"
-            fi
-            ;;
-        7)
-            echo -e "当前存在"
-            ls | grep "^SillyTavern_\([^o].*\|..+\.?.*\)$"
-            echo -e "是否删除所有旧版本酒馆喵？"
-            read delSTChoice
-            [[ "$delSTChoice" == [yY] ]] && { echo -e "开始删除喵~"; ls | grep "^SillyTavern_\([^o].*\|..+\.?.*\)$" | xargs -d"\n" rm -r; echo -e "旧版本酒馆删除完成了喵~"; } || echo "什么都没有执行喵~" >&2
-            ;;
-        8)
-            while :
-            do
-                [ ! -d SillyTavern_old ] && { echo -e "hoping：当前未检查到上一版本喵~"; break; }
-                echo -e "版本正在回退中，请稍等喵~"
-                mv SillyTavern SillyTavern_temp
-                mv SillyTavern_old SillyTavern
-                mv SillyTavern_temp SillyTavern_old
-                echo -e "hoping：版本回退成功了喵~"
-                st_version=$(grep '"version"' "SillyTavern/package.json" | awk -F '"' '{print $4}')
-                break   
-            done
-            ;;
-        9)
-            [ ! command -v zip &> /dev/null ] && { DEBIAN_FRONTEND=noninteractive apt install zip -y; }
-            echo -e "\033[0;33m压缩文件中，请稍等喵~\033[0m"
-            rm -rf SillyTavern.zip
-            zip -rq SillyTavern.zip SillyTavern/
-            echo -e "文件压缩完成"
-            python -m http.server 8976 &
-            echo -e "hoping：\033[0;33m十秒后将关闭网页并回到主页面喵~\033[0m"
-            termux-open-url http://127.0.0.1:8976/SillyTavern.zip
-            sleep 10
-            rm -rf SillyTavern.zip
-            pkill -f 'python -m http.server'
-            ;;
         *)
             echo "什么都没有执行喵~"
             ;;
     esac
 }
 
-function TavernAI-extrasinstall {
-
-	echo -e "安装TavernAI-extras（酒馆拓展）分为三步骤\n分别大致所需\n三分钟\n\033[0;33m七分钟\n\033[0m\033[0;31m十五分钟\n\033[0m具体时间视情况而定\n\033[0;31m全部安装大致所需\033[0;33m 3 \033[0m\033[0;31mG存储(不包括额外模型)\033[0m"
-	echo -e "当出现\n\033[0;32m恭喜TavernAI-extras（酒馆拓展）所需环境已完全安装，可进行启动喵~\033[0m\n则说明安装完毕喵~"
-	read -p "是否现在进行安装TavernAI-extras（酒馆拓展）[y/n]？" extrasinstallchoice
-	[ "$extrasinstallchoice" = "y" ] || [ "$extrasinstallchoice" = "Y" ] && echo "已开始安装喵~" || exit 7
-	#检测环境
-	if [ ! -d "/root/TavernAI-extras" ]; then
-		echo "hoping:未检测到TavernAI-extras（酒馆拓展），正在通过git下载"
-		git clone https://github.com/Cohee1207/TavernAI-extras /root/TavernAI-extras
-		[ -d /root/TavernAI-extras ] || { echo "TavernAI-extras（酒馆拓展）安装失败，请更换网络后重试喵~"; exit 8; }
-	fi
-	
-	if [ ! -d "/root/myenv" ] || [ ! -f "/root/myenv/bin/activate" ]; then
-		rm -rf /root/myenv
-		# 更新软件包列表并安装所需软件包，重定向输出。
-		echo "正在更新软件包列表..."
-		apt update -y > /dev/null 2>&1
-
-		echo -e "\033[0;33m正在安装python3虚拟环境，请稍候\n\033[0;33m(hoping：首次安装大概需要7到15分钟喵~)..."
-		read -p "是否现在进行安装喵？[y/n]" python3venvchoicce
-		[ "$python3venvchoicce" = "y" ] || [ "$python3venvchoicce" = "Y" ] && DEBIAN_FRONTEND=noninteractive apt install python3 python3-pip python3-venv -y || exit 9
-		echo "python3虚拟环境安装完成。正在创建虚拟环境"
-		python3 -m venv /root/myenv
-		echo "虚拟环境完成，路径为/root/myenv"
-	fi
-	echo -e "\033[0;31m正在安装requirements.txt所需依赖\n\033[0m(hoping：首次安装大概需要15至30分钟，最后构建时会出现长时间页面无变化，请耐心等待喵~)..."
-	read -p "是否现在进行安装喵？[y/n]" requirementschoice
-	[ "$requirementschoice" = "y" ] || [ "$requirementschoice" = "Y" ] && { source /root/myenv/bin/activate; cd /root/TavernAI-extras; pip3 install -r requirements.txt; } || exit 10
-	echo -e "喵喵？\n\033[0;32m恭喜TavernAI-extras（酒馆拓展）所需环境已完全安装，可进行启动喵~\033[0m"
-	
-}
-
-function TavernAI-extrasstart {
-
-	if [ ! -d "/root/TavernAI-extras" ] || [ ! -d "/root/myenv" ] || [ ! -f "/root/myenv/bin/activate" ]; then
-	echo "检测到当前环境不完整，先进行TavernAI-extras（酒馆拓展）安装喵~"
-	exit 11
-	fi
-	echo -e "\033[0;33m喵喵小提示：\n\033[0m启动对应拓展时可能需要额外下载，具体情况可以查看官方文档喵~"
-	sleep 3
-	
-	#进入虚拟环境
-	source /root/myenv/bin/activate
-	cd /root/TavernAI-extras
-	#确认依赖已安装
-	echo -e "正在检测依赖安装情况喵~"
-	pip3 install -r requirements.txt
-	clear
-	
-	# 选项数组
-	modules=("caption" "chromadb" "classify" "coqui-tts" "edge-tts" "embeddings" "rvc" "sd" "silero-tts" "summarize" "talkinghead" "websearch" "确认" "退出")
-
-	# 数组中选项的状态，0 - 未选择，1 - 已选定
-	declare -A selection_status
-
-	# 初始化选项状态
-	for i in "${!modules[@]}"; do
-	  selection_status[$i]=0
-	  selection_status[4]=1
-	done
-
-	# 函数：打印已选中的选项
-	print_selected() {
-	  selected_modules=()
-	  for i in "${!selection_status[@]}"; do
-		if [[ "${selection_status[$i]}" -eq 1 ]]; then
-		  selected_modules+=("${modules[$i]}")
-		fi
-	  done
-	  echo -e "\033[0;33m--------------------------------\033[0m"
-	  echo -e "\033[0;33m使用上↑，下↓进行控制\n\033[0m回车选中，再次选中可取消选定\n\033[0;33m选择完毕后选择确认即可喵~\033[0m"
-	  echo "喵喵当前选择了: $(IFS=,; echo -e "\033[0;36m${selected_modules[*]}\033[0m")"
-	}
-
-	# 函数：显示菜单
-	show_menu() {
-	  print_selected
-	  echo -e "\033[0;33m--------------------------------\033[0m"
-	  for i in "${!modules[@]}"; do
-		if [[ "$i" -eq "$current_selection" ]]; then
-		  # 当前选择中的选项使用绿色显示
-		  echo -e "${GREEN}${modules[$i]} (选择中)${NC}"
-		elif [[ "${selection_status[$i]}" -eq 1 ]]; then
-		  # 被选定的选项使用红色显示
-		  echo -e "${RED}${modules[$i]} (已选定)${NC}"
-		else
-		  # 其他选项正常显示
-		  echo -e "${modules[$i]} (未选择)"
-		fi
-	  done
-	  echo -e "\033[0;33m--------------------------------\033[0m"
-	}
-
-	current_selection=0
-	while true; do
-	  show_menu
-	  # 读取用户输入
-	  IFS= read -rsn1 key
-
-	  case "$key" in
-		$'\x1b')
-		  # 读取转义序列
-		  read -rsn2 -t 0.1 key
-		  case "$key" in
-			'[A') # 上箭头
-			  if [[ $current_selection -eq 0 ]]; then
-				current_selection=$((${#modules[@]} - 1))
-			  else
-				((current_selection--))
-			  fi
-			  ;;
-			'[B') # 下箭头
-			  if [[ $current_selection -eq $((${#modules[@]} - 1)) ]]; then
-				current_selection=0
-			  else
-				((current_selection++))
-			  fi
-			  ;;
-		  esac
-		  ;;
-		"") # Enter键
-		  if [[ $current_selection -eq $((${#modules[@]} - 2)) ]]; then
-			# 选择 "确认" 选项
-			break
-		  elif [[ $current_selection -eq $((${#modules[@]} - 1)) ]]; then
-			# 选择 "退出" 选项
-			exit 12
-		  else
-			# 切换选择状态
-			selection_status[$current_selection]=$((1 - selection_status[$current_selection]))
-		  fi
-		  ;;
-		'q') # 按 'q' 退出
-		  break
-		  ;;
-	  esac
-	  # 清除屏幕以准备下一轮显示
-	  clear
-	done
-
-	# 构建命令行
-	command="python3 server.py"
-	if [ ${#selected_modules[@]} -ne 0 ]; then
-	  command+=" --enable-module=$(IFS=,; echo "${selected_modules[*]}")"
-	fi
-
-	# 打印最终的命令行
-	clear
-	echo "正在启动相关酒馆拓展喵~:"
-	echo "$command"
-	eval $command
-	
-	
-	
-}
 # 主菜单
 echo -e "                                              
 喵喵一键脚本
