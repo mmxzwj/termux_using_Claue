@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# 基础系统更新和安装
+yes | pkg update
+yes | pkg upgrade
+yes | pkg install git
+yes | pkg install nodejs
+
 echo "                                              
 喵喵一键安卓脚本
 作者: hoping喵，坏水秋
